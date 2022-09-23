@@ -44,11 +44,11 @@ async function parseXlsxSheetContent() {
       ],
     ];
     const failed_geometrics = [
-      ["Old address", "Refined/more accurate address"],
+      ["Old address (not found)", "Refined/more accurate address"],
     ];
 
     console.log("Started processing...");
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < locations.length; i++) {
       console.log(`Processing ${locations[i]}...`);
       const encodedURI = encodeURI(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${locations[i]}&key=${API_KEY}`
@@ -65,14 +65,12 @@ async function parseXlsxSheetContent() {
 
       if (status === "OK")
         succeeded_geometrics.push([
-          locations[i],
+          locations[i].replaceAll("+", " ").toUpperCase(),
           `${results[0].geometry.location.lat},${results[0].geometry.location.lng}`,
-          {
-            Target: returnGoogleLink(
-              results[0].geometry.location.lat,
-              results[0].geometry.location.lng
-            ),
-          },
+          returnGoogleLink(
+            results[0].geometry.location.lat,
+            results[0].geometry.location.lng
+          ),
           0,
           "",
         ]);
